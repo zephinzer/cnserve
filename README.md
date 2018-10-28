@@ -1,5 +1,5 @@
 # Cloud Native Server
-A barebones static file server for use in a cloud native environment.
+A barebones static file server for use in a cloud native environment written in Go.
 
 ## Overview
 This server includes:
@@ -7,6 +7,23 @@ This server includes:
 - openmetrics support
 - opentracing support
 - access logs streaming
+
+## Todos
+- [x] Serve static files
+- [x] Static files directory configuration
+- [x] Cross Origin Resource Sharing implementation
+- [x] Cross Origin Resource Sharing configuration
+- [x] Content Security Policy implementation
+- [ ] Content Security Policy configuration
+- [x] Prometheus metrics implementation
+- [ ] Prometheus metrics endpoint configuration
+- [ ] Prometheus metrics endpoint BasicAuth protection
+- [ ] Prometheus metrics push gateway implementation
+- [ ] Prometheus metrics push gateway configuration
+- [x] Zipkin distributed tracing implementation
+- [ ] Zipkin distributed tracing configuration
+- [ ] Healthcheck implementation
+- [ ] Healthcheck configuration
 
 ## Usage
 
