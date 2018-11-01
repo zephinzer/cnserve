@@ -4,12 +4,11 @@ PROJECT_NAME=$(notdir $(CURDIR))
 start: build.dev
 	-@docker stop $(PROJECT_NAME)-dev
 	-@docker rm $(PROJECT_NAME)-dev
-	@docker run \
-		--env ALLOWED_ORIGINS=http://localhost:3000,https://google.com \
-		--env PORT=8080 \
-		--env PATH_STATIC=./static \
+	-@$(eval PORT=$(shell cat $(CURDIR)/.env | grep 'PORT' | cut -f 2 -d '='))
+	docker run \
+		--env-file $(CURDIR)/.env \
 		--workdir /go/src/$(PROJECT_NAME) \
-		-p 8080:8080 \
+		-p ${PORT}:${PORT} \
 		-v $(CURDIR):/go/src/$(PROJECT_NAME) \
 		-v $(CURDIR)/.cache:/.cache \
 		-u $$(id -u) \
@@ -19,12 +18,11 @@ start: build.dev
 start.prd: build.prd
 	-@docker stop $(PROJECT_NAME)
 	-@docker rm $(PROJECT_NAME)
-	@docker run \
-		--env ALLOWED_ORIGINS=http://localhost:3000,https://google.com \
-		--env PORT=8080 \
-		--env PATH_STATIC=/static \
+	-$(eval PORT=$(shell cat $(CURDIR)/.env | grep 'PORT' | cut -f 2 -d '='))
+	docker run \
+		--env-file $(CURDIR)/.env \
 		--workdir / \
-		-p 8080:8080 \
+		-p ${PORT}:${PORT} \
 		-v $(CURDIR)/static:/static \
 		-u $$(id -u) \
 		--name $(PROJECT_NAME) \
@@ -88,3 +86,6 @@ build.prd:
 	docker build \
 		--target production \
 		--tag $(PROJECT_NAME):latest .
+
+build.local:
+	GOPATH=$$(pwd) go build

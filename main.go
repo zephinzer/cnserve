@@ -2,10 +2,6 @@ package main
 
 import (
 	"fmt"
-	zipkin "github.com/openzipkin/zipkin-go"
-	zipkinhttp "github.com/openzipkin/zipkin-go/middleware/http"
-	logreporter "github.com/openzipkin/zipkin-go/reporter/log"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -33,18 +29,7 @@ func main() {
 	server := Server()
 	handler := CorsMiddleware(server)
 	handler = SecurityMiddleware(handler)
-	reporter := logreporter.NewReporter(log.New(os.Stderr, "", log.LstdFlags))
-	defer reporter.Close()
-	endpoint, endpointErr := zipkin.NewEndpoint("cnserve", "localhost:9411")
-	if endpointErr != nil {
-		log.Fatalf("Unable to create local endpoint: %v\n", endpointErr)
-	}
-	tracer, tracerErr := zipkin.NewTracer(reporter, zipkin.WithLocalEndpoint(endpoint))
-	if tracerErr != nil {
-		log.Fatalf("Unable to create tracer: %v\n", tracerErr)
-	}
-	zipkinMiddleware := zipkinhttp.NewServerMiddleware(tracer, zipkinhttp.TagResponseSize(true))
-	handler = zipkinMiddleware(handler)
+	handler = TracingMiddleware(handler)
 
 	port := getPortFromEnvironment()
 	fmt.Printf("[main] Listening on port: %d\n", port)
